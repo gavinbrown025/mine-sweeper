@@ -6,7 +6,7 @@ import {
 	gridWidth,
 	gridHeight,
 	gridSet,
-} from './useCreateGrid'
+} from '@/utils/useCreateGrid'
 
 const gridStyles = computed(() => {
 	return [

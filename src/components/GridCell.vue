@@ -1,23 +1,59 @@
 <script setup>
-import { dangerCount } from './useCreateGrid'
+import { computed } from 'vue'
+import { gridSet } from '@/utils/useCreateGrid'
 
 const props = defineProps({
-	item: Boolean,
-	index: { type: Number, default: null },
+  item: { type: Object, default: null },
+  index: { type: Number, default: null },
 })
+
+const showCell = computed(() => gridSet.value[props.index].show)
+const isBomb = computed(() => props.item.count > 8)
+
+const showSurrounding = (cellIndex, adjacentBlanks) => {
+  if (adjacentBlanks.has(cellIndex) || !gridSet.value[cellIndex]) return
+  adjacentBlanks.add(cellIndex)
+
+  gridSet.value[cellIndex].surroundings.forEach((surrounding) => {
+    if (surrounding.count == 0) {
+      return showSurrounding(surrounding.index, adjacentBlanks)
+    }
+    adjacentBlanks.add(surrounding.index)
+  })
+}
+
+const checkCell = () => {
+  const i = props.index
+  gridSet.value[i].show = true
+  // if cell is blank check show surroundings except bombs
+  // if any surroundings do the same for them
+  if (!props.item.count) {
+    const adjacentBlanks = new Set()
+    showSurrounding(i, adjacentBlanks)
+    adjacentBlanks.forEach((idx) => (gridSet.value[idx].show = true))
+  }
+}
 </script>
 
 <template>
-	<div
-		class="size-8 grid place-items-center cursor-pointer"
-		:class="
-			props.item
-				? 'bg-red-400 hover:bg-red-300'
-				: 'hover:bg-blue-300 bg-blue-400'
-		"
-	>
-		<span class="leading-none font-bold">{{
-			props.item ? '' : dangerCount(props.index) || ''
-		}}</span>
-	</div>
+  <div
+    id="cover"
+    class="relative size-8 border-collapse border cursor-default"
+    @click="checkCell"
+  >
+    <div
+      v-if="!showCell || true"
+      class="hidden absolute size-full bg-green-500 hover:bg-green-300 cursor-pointer"
+    />
+    <div
+      class="size-full grid place-items-center"
+      :class="
+        isBomb ? 'bg-red-400' : !showCell ? 'bg-blue-400' : 'bg-green-500'
+      "
+    >
+      <span class="leading-none font-bold">{{
+        isBomb ? 'X' : props.item.count || ''
+      }}</span>
+    </div>
+  </div>
 </template>
