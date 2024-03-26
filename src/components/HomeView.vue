@@ -1,12 +1,12 @@
 <script setup>
 import { onMounted } from 'vue'
-import { setBombLocations, gridWidth, gridHeight } from '@/utils/useCreateGrid'
+import { initialGrid, setBombLocations, gridWidth, gridHeight } from '@/utils/useCreateGrid'
 
 import GridContainer from './GridContainer.vue'
 onMounted(() => {
 	gridWidth.value = 10
 	gridHeight.value = 14
-	setBombLocations()
+  initialGrid()
 })
 
 const setstuff = () => {

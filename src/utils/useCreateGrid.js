@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 export const gridWidth = ref()
 export const gridHeight = ref()
@@ -8,11 +8,17 @@ export const bombCount = ref(16)
 export const bombLocations = ref()
 export const gridSet = ref([])
 
-function uniqueRandomNumbers(maxNumber, count) {
+export const startedGame = ref(false)
+
+export const initialGrid = () => {
+  gridSet.value = new Array(gridSize.value).fill({})
+}
+
+function uniqueRandomNumbers(maxNumber, count, excluded) {
   const numbers = new Set()
   while (numbers.size < count) {
     const randomNumber = Math.floor(Math.random() * maxNumber)
-    numbers.add(randomNumber)
+    if (!excluded.includes(randomNumber)) numbers.add(randomNumber)
   }
   return Array.from(numbers)
 }
@@ -47,11 +53,16 @@ const getCount = (surroundings) =>
     return total
   }, 0)
 
-export const setBombLocations = () => {
-  const set = uniqueRandomNumbers(gridSize.value - 1, bombCount.value)
+export const setBombLocations = (startPoint) => {
+
+  const set = uniqueRandomNumbers(
+    gridSize.value - 1,
+    bombCount.value,
+    [startPoint, ...getSurroundings(startPoint)]
+  )
   bombLocations.value = set
 
-  gridSet.value = new Array(gridSize.value).fill(0).map((_, i) => {
+  gridSet.value = gridSet.value.map((_, i) => {
     const count = set.includes(i) ? 9 : getCount(getSurroundings(i))
     return { show: false, count, surroundings: {} }
   })
@@ -61,4 +72,5 @@ export const setBombLocations = () => {
       count: arr[n].count,
     }))
   })
+  startedGame.value = true
 }

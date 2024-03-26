@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { gridSet } from '@/utils/useCreateGrid'
+import { gridSet, startedGame, setBombLocations } from '@/utils/useCreateGrid'
 
 const props = defineProps({
   item: { type: Object, default: null },
@@ -24,6 +24,7 @@ const showSurrounding = (cellIndex, adjacentBlanks) => {
 
 const checkCell = () => {
   const i = props.index
+  if (!startedGame.value) setBombLocations(i)
   gridSet.value[i].show = true
   // if cell is blank check show surroundings except bombs
   // if any surroundings do the same for them
@@ -42,14 +43,12 @@ const checkCell = () => {
     @click="checkCell"
   >
     <div
-      v-if="!showCell || true"
-      class="hidden absolute size-full bg-green-500 hover:bg-green-300 cursor-pointer"
+      v-if="!showCell"
+      class="absolute size-full bg-green-500 hover:bg-green-300 cursor-pointer"
     />
     <div
       class="size-full grid place-items-center"
-      :class="
-        isBomb ? 'bg-red-400' : !showCell ? 'bg-blue-400' : 'bg-green-500'
-      "
+      :class="isBomb ? 'bg-red-400' : 'bg-blue-400'"
     >
       <span class="leading-none font-bold">{{
         isBomb ? 'X' : props.item.count || ''
