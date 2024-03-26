@@ -1,4 +1,6 @@
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
+
+import { gameStatus } from './useGameplay'
 
 export const gridWidth = ref()
 export const gridHeight = ref()
@@ -7,18 +9,6 @@ export const gridSize = computed(() => gridWidth.value * gridHeight.value)
 export const bombCount = ref()
 export const bombLocations = ref()
 export const gridSet = ref([])
-
-export const startedGame = ref(false)
-
-watch(
-  () => [gridSize.value, bombCount.value],
-  () => resetGame()
-)
-
-const resetGame = () => {
-  startedGame.value = false
-  initializeGrid()
-}
 
 export const initializeGrid = () => {
   gridSet.value = new Array(gridSize.value).fill({})
@@ -54,7 +44,7 @@ export const getSurroundings = (i) => {
     !(bottom || right) && i + 1 + w,
     !(top || left) && i - w - 1,
     !(bottom || left) && i - 1 + w,
-  ].filter((i) => i)
+  ].filter((si) => si || si === 0)
 }
 
 export const getCount = (surroundings) =>
@@ -77,8 +67,8 @@ export const setBombLocations = (startPoint) => {
   gridSet.value.forEach((_, i, arr) => {
     arr[i].surroundings = getSurroundings(i).map((n) => ({
       index: n,
-      count: arr[n].count,
+      count: arr[n]?.count,
     }))
   })
-  startedGame.value = true
+  gameStatus.value = 'active'
 }
