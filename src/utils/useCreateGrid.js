@@ -1,16 +1,26 @@
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 export const gridWidth = ref()
 export const gridHeight = ref()
 export const gridSize = computed(() => gridWidth.value * gridHeight.value)
 
-export const bombCount = ref(16)
+export const bombCount = ref()
 export const bombLocations = ref()
 export const gridSet = ref([])
 
 export const startedGame = ref(false)
 
-export const initialGrid = () => {
+watch(
+  () => [gridSize.value, bombCount.value],
+  () => resetGame()
+)
+
+const resetGame = () => {
+  startedGame.value = false
+  initializeGrid()
+}
+
+export const initializeGrid = () => {
   gridSet.value = new Array(gridSize.value).fill({})
 }
 
@@ -47,19 +57,17 @@ export const getSurroundings = (i) => {
   ].filter((i) => i)
 }
 
-const getCount = (surroundings) =>
+export const getCount = (surroundings) =>
   surroundings.reduce((total, i) => {
     if (bombLocations.value.includes(i)) return total + 1
     return total
   }, 0)
 
 export const setBombLocations = (startPoint) => {
-
-  const set = uniqueRandomNumbers(
-    gridSize.value - 1,
-    bombCount.value,
-    [startPoint, ...getSurroundings(startPoint)]
-  )
+  const set = uniqueRandomNumbers(gridSize.value - 1, bombCount.value, [
+    startPoint,
+    ...getSurroundings(startPoint),
+  ])
   bombLocations.value = set
 
   gridSet.value = gridSet.value.map((_, i) => {
