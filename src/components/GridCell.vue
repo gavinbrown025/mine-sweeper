@@ -23,23 +23,25 @@ const textColor = computed(() => {
 })
 </script>
 
+<style scoped>
+.border-outset {
+  border-style: outset;
+}
+</style>
+
 <template>
-  <div
-    class="relative size-6 border border-gray-200 cursor-default"
-    @click="checkCell(item, index)"
-  >
+  <div class="relative size-6 cursor-default" @click="checkCell(item, index)">
     <div
       v-if="!showCell"
-      class="absolute size-full bg-gray-400 hover:bg-gray-300 cursor-pointer"
+      class="absolute size-full bg-gray-300 border-2 border-outset hover:bg-gray-300 cursor-pointer"
     />
     <div
-      class="size-full grid place-items-center"
-      :class="isBomb ? 'bg-gray-300' : 'bg-gray-300'"
+      class="size-full grid place-items-center border border-white bg-gray-200"
     >
       <UIIcon
         v-if="isBomb"
         icon="bomb"
-        class="leading-none text-base text-red-900"
+        class="leading-none text-base text-black"
       />
       <span
         v-else

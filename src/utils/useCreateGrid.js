@@ -14,7 +14,7 @@ export const initializeGrid = () => {
   gridSet.value = new Array(gridSize.value).fill({})
 }
 
-function uniqueRandomNumbers(maxNumber, count, excluded) {
+const uniqueRandomNumbers = (maxNumber, count, excluded) => {
   const numbers = new Set()
   while (numbers.size < count) {
     const randomNumber = Math.floor(Math.random() * maxNumber)
