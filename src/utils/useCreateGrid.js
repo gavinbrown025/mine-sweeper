@@ -8,7 +8,15 @@ export const gridSize = computed(() => gridWidth.value * gridHeight.value)
 
 export const bombCount = ref()
 export const bombLocations = ref()
+
 export const gridSet = ref([])
+
+export const blankLocations = computed(() => {
+  return gridSet.value
+  .map((cell, i) => (cell.count == 0 ? i : null))
+  .filter((i) => i !== null)
+})
+
 
 export const initializeGrid = () => {
   gridSet.value = new Array(gridSize.value).fill({})
@@ -56,7 +64,7 @@ export const getCount = (surroundings) =>
 export const setBombLocations = (startPoint) => {
   const set = uniqueRandomNumbers(gridSize.value - 1, bombCount.value, [
     startPoint,
-    ...getSurroundings(startPoint),
+    // ...getSurroundings(startPoint),
   ])
   bombLocations.value = set
 

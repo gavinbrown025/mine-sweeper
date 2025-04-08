@@ -30,7 +30,7 @@ const textColor = computed(() => {
 </style>
 
 <template>
-  <div class="relative size-6 cursor-default" @click="checkCell(item, index)">
+  <div class="relative size-6 cursor-default" @click="checkCell(index)">
     <div
       v-if="!showCell"
       class="absolute size-full bg-gray-300 border-2 border-outset hover:bg-gray-300 cursor-pointer"
