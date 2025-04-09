@@ -2,7 +2,6 @@ import { ref, watch, computed, watchEffect } from "vue";
 import {
   gridSet,
   setBombLocations,
-  bombLocations,
   initializeGrid,
   bombCount,
   gridSize,
@@ -14,13 +13,10 @@ const showAllCells = () => {
   gridSet.value = gridSet.value.map((cell) => ({ ...cell, show: true }));
 };
 
-watch(
-  () => gameStatus.value,
-  (nv) => {
-    console.log("gameStatus", nv);
-    return nv == "loss" && showAllCells();
-  }
-);
+const gameLost = () => {
+  gameStatus.value = "loss";
+  showAllCells();
+}
 
 const cleared = computed(
   () => gridSet.value.filter((cell) => cell.show).length
@@ -32,38 +28,34 @@ watchEffect(() => {
 });
 
 export const callCount = ref(0);
-export const cancelCount = ref(0);
-export const innerForEach = ref(0);
 
-const showSurrounding = (startIndex, adjacentBlanks) => {
-  if (!gridSet.value[startIndex]) return cancelCount.value++;
-
-  adjacentBlanks.add(startIndex);
+const showSurrounding = (startIndex, setToReveal) => {
+  if (!gridSet.value[startIndex]) return;
+  setToReveal.add(startIndex);
 
   gridSet.value[startIndex].surroundings.forEach((surrounding) => {
     callCount.value++;
-    if (adjacentBlanks.has(surrounding.index)) return;
+    if (setToReveal.has(surrounding.index)) return;
     if (surrounding.count === 0) {
-      return showSurrounding(surrounding.index, adjacentBlanks);
+      return showSurrounding(surrounding.index, setToReveal);
     }
-    adjacentBlanks.add(surrounding.index);
+    setToReveal.add(surrounding.index);
   });
 };
 
-const expandFromBlank = (i) => {
-  const adjacentBlanks = new Set();
-  showSurrounding(i, adjacentBlanks);
-  adjacentBlanks.forEach((idx) => (gridSet.value[idx].show = true));
+const floodFill = (i) => {
+  const setToReveal = new Set();
+  showSurrounding(i, setToReveal);
+  setToReveal.forEach((idx) => (gridSet.value[idx].show = true));
 };
 
 export const checkCell = (i) => {
   if (gameStatus.value == "initialized") setBombLocations(i);
   const item = gridSet.value[i];
-  if (item.count == 9) {
-    return (gameStatus.value = "loss");
-  }
+  if (item.count == 9) return gameLost();
+
   gridSet.value[i].show = true;
-  if (item.count === 0) expandFromBlank(i);
+  if (item.count === 0) floodFill(i);
 };
 
 export const resetGame = () => {

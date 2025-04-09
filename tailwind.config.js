@@ -3,7 +3,7 @@
 const gridRepeat = () =>
   Object.assign(
     {},
-    ...Array.from({ length: 40 }).map((_, i) => ({
+    ...Array.from({ length: 44 }).map((_, i) => ({
       [`ms${i + 5}`]: `repeat(${i + 5}, 1.5rem)`,
     }))
   );
