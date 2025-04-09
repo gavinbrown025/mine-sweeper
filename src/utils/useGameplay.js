@@ -35,17 +35,15 @@ export const callCount = ref(0);
 export const cancelCount = ref(0);
 export const innerForEach = ref(0);
 
-const hasBomb = (i) => bombLocations.value.includes(i);
-const showSurrounding = (cellIndex, adjacentBlanks) => {
-  callCount.value++
-  if (adjacentBlanks.has(cellIndex) || !gridSet.value[cellIndex]) {
-    return cancelCount.value++;
-  }
-  adjacentBlanks.add(cellIndex);
+const showSurrounding = (startIndex, adjacentBlanks) => {
+  if (!gridSet.value[startIndex]) return cancelCount.value++;
 
-  gridSet.value[cellIndex].surroundings.forEach((surrounding) => {
-    if (surrounding.count == 0) {
-      innerForEach.value++
+  adjacentBlanks.add(startIndex);
+
+  gridSet.value[startIndex].surroundings.forEach((surrounding) => {
+    callCount.value++;
+    if (adjacentBlanks.has(surrounding.index)) return;
+    if (surrounding.count === 0) {
       return showSurrounding(surrounding.index, adjacentBlanks);
     }
     adjacentBlanks.add(surrounding.index);
@@ -59,7 +57,7 @@ const expandFromBlank = (i) => {
 };
 
 export const checkCell = (i) => {
-  if (gameStatus.value == "initialized") setBombLocations(i)
+  if (gameStatus.value == "initialized") setBombLocations(i);
   const item = gridSet.value[i];
   if (item.count == 9) {
     return (gameStatus.value = "loss");
@@ -68,9 +66,7 @@ export const checkCell = (i) => {
   if (item.count === 0) expandFromBlank(i);
 };
 
-
 export const resetGame = () => {
   gameStatus.value = "initialized";
   initializeGrid();
 };
-

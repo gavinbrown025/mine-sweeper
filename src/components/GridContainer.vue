@@ -11,8 +11,8 @@ import {
 const gridStyles = computed(() => {
 	return [
 		`grid`,
-		`grid-cols-${gridWidth.value}`,
-		` grid-rows-${gridHeight.value}`,
+		`grid-cols-ms${gridWidth.value}`,
+		`grid-rows-ms${gridHeight.value}`,
 	]
 })
 
