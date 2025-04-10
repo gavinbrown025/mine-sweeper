@@ -4,7 +4,6 @@ import { useStorage } from "@vueuse/core";
 import GridContainer from "./GridContainer.vue";
 import GameHeader from "./GameHeader.vue";
 
-import { callCount } from "@/utils/useGameplay";
 import {
   initializeGrid,
   bombCount,
@@ -25,6 +24,5 @@ onMounted(() => {
   <div class="grid place-items-center">
     <GameHeader />
     <GridContainer />
-    <p>call: {{ callCount }}</p>
   </div>
 </template>

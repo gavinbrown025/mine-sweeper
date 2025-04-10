@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 import { resetGame } from '@/utils/useGameplay'
 import SettingsForm from './SettingsForm.vue'
+import UITimer from './UITimer.vue'
 
 const showDropdown = ref(false)
 const target = ref(null)
@@ -10,9 +11,10 @@ onClickOutside(target, () => (showDropdown.value = false))
 </script>
 
 <template>
-  <div class="w-full flex justify-between text-white">
+  <div class="w-full flex gap-4 justify-between text-white">
     <h2 class="text-white py-4 text-2xl">MineLeSweep</h2>
     <div class="flex items-center gap-4">
+      <UITimer />
       <button @click="resetGame()" class="bg-gray-500 p-2 rounded-md">
         Reset
       </button>

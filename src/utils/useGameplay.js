@@ -16,7 +16,7 @@ const showAllCells = () => {
 const gameLost = () => {
   gameStatus.value = "loss";
   showAllCells();
-}
+};
 
 const cleared = computed(
   () => gridSet.value.filter((cell) => cell.show).length
@@ -27,21 +27,27 @@ watchEffect(() => {
   if (cleared.value == total) gameStatus.value = "win";
 });
 
-export const callCount = ref(0);
-
 const showSurrounding = (startIndex, setToReveal) => {
   if (!gridSet.value[startIndex]) return;
-  setToReveal.add(startIndex);
-
-  gridSet.value[startIndex].surroundings.forEach((surrounding) => {
-    callCount.value++;
-    if (setToReveal.has(surrounding.index)) return;
-    if (surrounding.count === 0) {
-      return showSurrounding(surrounding.index, setToReveal);
-    }
-    setToReveal.add(surrounding.index);
-  });
+  gridSet.value[startIndex].surroundings
+    .filter((s) => !setToReveal.has(s.index))
+    .forEach((s) => {
+      setToReveal.add(s.index);
+      if (s.count === 0) showSurrounding(s.index, setToReveal);
+    });
 };
+
+// const floodFill2 = (startIndex) => {
+//   if (!gridSet.value[startIndex]) return;
+//   gridSet.value[startIndex].surroundings
+//     .filter((s) => !gridSet.value[s.index].show)
+//     .forEach((s) => {
+//       gridSet.value[s.index].show = true;
+//       if (s.count === 0) {
+//         return floodFill(s.index);
+//       }
+//     });
+// };
 
 const floodFill = (i) => {
   const setToReveal = new Set();
@@ -62,3 +68,7 @@ export const resetGame = () => {
   gameStatus.value = "initialized";
   initializeGrid();
 };
+
+watchEffect(() => {
+  console.log(gameStatus.value)
+})
