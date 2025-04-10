@@ -17,6 +17,10 @@ const gameLost = () => {
   gameStatus.value = "loss";
   showAllCells();
 };
+export const resetGame = () => {
+  gameStatus.value = "initialized";
+  initializeGrid();
+};
 
 const cleared = computed(
   () => gridSet.value.filter((cell) => cell.show).length
@@ -32,22 +36,11 @@ const showSurrounding = (startIndex, setToReveal) => {
   gridSet.value[startIndex].surroundings
     .filter((s) => !setToReveal.has(s.index))
     .forEach((s) => {
+      if (gridSet.value[s.index].flagged) return;
       setToReveal.add(s.index);
       if (s.count === 0) showSurrounding(s.index, setToReveal);
     });
 };
-
-// const floodFill2 = (startIndex) => {
-//   if (!gridSet.value[startIndex]) return;
-//   gridSet.value[startIndex].surroundings
-//     .filter((s) => !gridSet.value[s.index].show)
-//     .forEach((s) => {
-//       gridSet.value[s.index].show = true;
-//       if (s.count === 0) {
-//         return floodFill(s.index);
-//       }
-//     });
-// };
 
 const floodFill = (i) => {
   const setToReveal = new Set();
@@ -57,18 +50,16 @@ const floodFill = (i) => {
 
 export const checkCell = (i) => {
   if (gameStatus.value == "initialized") setBombLocations(i);
-  const item = gridSet.value[i];
-  if (item.count == 9) return gameLost();
+  const { show, count, flagged } = gridSet.value[i];
+  if (flagged || show) return;
+  if (count == 9) return gameLost();
 
   gridSet.value[i].show = true;
-  if (item.count === 0) floodFill(i);
+  if (count === 0) floodFill(i);
 };
 
-export const resetGame = () => {
-  gameStatus.value = "initialized";
-  initializeGrid();
+export const flagCell = (i) => {
+  if (gameStatus.value != "active") return;
+  if (gridSet.value[i].show) return;
+  gridSet.value[i].flagged = !gridSet.value[i].flagged;
 };
-
-watchEffect(() => {
-  console.log(gameStatus.value)
-})

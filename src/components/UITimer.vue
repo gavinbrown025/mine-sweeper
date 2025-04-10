@@ -8,16 +8,6 @@ import { useIntervalFn } from "@vueuse/core";
 // Time counter (in seconds)
 const elapsedTime = ref(0);
 
-watch(gameStatus, (status) => {
-  if (status === "active") {
-    startTimer();
-  } else if (status === "loss" || status === "win") {
-    stopTimer();
-  } else if (status === "initialized") {
-    resetTimer();
-  }
-});
-
 // Start/stop logic
 const {
   pause: stopTimer,
@@ -38,10 +28,17 @@ const formattedTime = computed(() => {
   return `${mins}:${secs}`;
 });
 
-// Expose functions so you can call `startTimer()` when the game starts
-// and `stopTimer()` when it ends
+watch(gameStatus, (status) => {
+  if (status === "active") startTimer();
+  if (status === "loss" || status === "win") stopTimer();
+  if (status === "initialized") resetTimer();
+});
 </script>
 
 <template>
-  <div class="px-2 py-1 border-white border-2 rounded-md   text-lg font-mono text-white">{{ formattedTime }}</div>
+  <div
+    class="px-2 py-1 border-white border-2 rounded-md text-lg font-mono text-white"
+  >
+    {{ formattedTime }}
+  </div>
 </template>

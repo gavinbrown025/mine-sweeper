@@ -63,7 +63,7 @@ export const setBombLocations = (startPoint) => {
 
   gridSet.value = gridSet.value.map((_, i) => {
     const count = set.includes(i) ? 9 : getCount(getSurroundings(i))
-    return { show: false, count, surroundings: {} }
+    return { show: false, count, flagged:false, surroundings: {} }
   })
   gridSet.value.forEach((_, i, arr) => {
     arr[i].surroundings = getSurroundings(i).map((n) => ({
