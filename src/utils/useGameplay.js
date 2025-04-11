@@ -1,11 +1,14 @@
-import { ref, watch, computed, watchEffect } from "vue";
+import { ref, computed, watchEffect } from "vue";
 import {
   gridSet,
   setBombLocations,
+  bombLocations,
   initializeGrid,
   bombCount,
   gridSize,
 } from "@/utils/useCreateGrid";
+
+import { flagMode } from "@/utils/useFlags";
 
 export const gameStatus = ref("initialized");
 
@@ -18,17 +21,21 @@ const gameLost = () => {
   showAllCells();
 };
 export const resetGame = () => {
+  flagMode.value = false;
   gameStatus.value = "initialized";
   initializeGrid();
 };
 
-const cleared = computed(
+const clearedCells = computed(
   () => gridSet.value.filter((cell) => cell.show).length
 );
 
 watchEffect(() => {
   const total = gridSize.value - bombCount.value;
-  if (cleared.value == total) gameStatus.value = "win";
+  if (clearedCells.value == total) {
+    gameStatus.value = "win";
+    bombLocations.value.forEach((i) => (gridSet.value[i].flagged = true));
+  }
 });
 
 const showSurrounding = (startIndex, setToReveal) => {
@@ -50,16 +57,12 @@ const floodFill = (i) => {
 
 export const checkCell = (i) => {
   if (gameStatus.value == "initialized") setBombLocations(i);
+  if (gameStatus.value != "active") return;
+
   const { show, count, flagged } = gridSet.value[i];
   if (flagged || show) return;
   if (count == 9) return gameLost();
 
   gridSet.value[i].show = true;
   if (count === 0) floodFill(i);
-};
-
-export const flagCell = (i) => {
-  if (gameStatus.value != "active") return;
-  if (gridSet.value[i].show) return;
-  gridSet.value[i].flagged = !gridSet.value[i].flagged;
 };

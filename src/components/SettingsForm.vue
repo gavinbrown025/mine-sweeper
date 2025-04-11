@@ -38,11 +38,7 @@ import { useStorage } from "@vueuse/core";
 import { resetGame } from "@/utils/useGameplay";
 import { bombCount, gridWidth, gridHeight } from "@/utils/useCreateGrid";
 
-// Limits
-const maxWidth = 44;
-const maxHeight = 48;
-
-const grid = useStorage("grid-layout", { width: 12, height: 20, bombs: 20 });
+const grid = useStorage("grid-settings", { width: 12, height: 20, bombs: 20 });
 const inputs = ref({ ...grid.value });
 
 const difficultySettings = ref({ easy: 0.1, medium: 0.18, hard: 0.24 });
@@ -60,8 +56,8 @@ watch(selectedDifficulty, (difficulty) => {
 
 // Apply new grid with clamped values
 const setNewGrid = () => {
-  const width = Math.min(inputs.value.width, maxWidth);
-  const height = Math.min(inputs.value.height, maxHeight);
+  const width = Math.max(10, Math.min(inputs.value.width, 44));
+  const height = Math.max(12, Math.min(inputs.value.height, 48));
   const bombs = Math.max(
     minBombs.value,
     Math.min(inputs.value.bombs, maxBombs.value)

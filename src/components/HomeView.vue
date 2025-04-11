@@ -11,7 +11,7 @@ import {
   gridHeight,
 } from "@/utils/useCreateGrid";
 
-const grid = useStorage("grid-layout", { width: 12, height: 20, bombs: 20 });
+const grid = useStorage("grid-settings", { width: 12, height: 20, bombs: 20 });
 onMounted(() => {
   gridWidth.value = grid.value.width;
   gridHeight.value = grid.value.height;
