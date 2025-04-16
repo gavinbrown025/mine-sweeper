@@ -9,9 +9,8 @@ defineProps({ icon: { type: String, default: "" } });
 <style scoped>
 .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "wght" 700, "GRAD" 0, "opsz" 20;
-
-  &.fill {
-    font-variation-settings: "FILL" 1, "wght" 700, "GRAD" 0, "opsz" 20;
-  }
+}
+.material-symbols-outlined.fill {
+  font-variation-settings: "FILL" 1, "wght" 700, "GRAD" 0, "opsz" 20;
 }
 </style>
