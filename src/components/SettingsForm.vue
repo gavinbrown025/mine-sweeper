@@ -12,6 +12,7 @@
             :key="key"
             :value="key"
             v-model="selectedDifficulty"
+            :disabled="key === 'custom'"
           >
             {{ toCapitalize(key) }}
           </UIRadioButton>
@@ -33,11 +34,12 @@
           :key="key"
           :value="key"
           v-model="selectedSize"
+          :disabled="key === 'custom'"
         >
           {{ toCapitalize(key) }}
         </UIRadioButton>
       </div>
-      <div class="flex items-center w-min gap-1">
+      <div class=" w-min mb-3 flex items-center gap-1">
         <label>W:</label>
         <input
           type="number"
@@ -52,8 +54,8 @@
         />
       </div>
 
-      <button type="submit" class="w-min p-2 bg-gray-500 rounded-md mt-1">
-        Apply
+      <button type="submit" class="p-2 bg-gray-500 rounded-md mt-1 hover:bg-gray-400">
+        Apply Settings
       </button>
     </form>
   </div>
@@ -83,7 +85,7 @@ const inputs = ref({ ...cachedGrid.value });
 const difficultySettings = ref({
   easy: 0.1,
   medium: 0.18,
-  hard: 0.24,
+  hard: 0.28,
   custom: 0.2,
 });
 
