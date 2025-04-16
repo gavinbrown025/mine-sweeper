@@ -1,23 +1,36 @@
 <script setup>
-import { onMounted } from 'vue'
-import { setBombLocations, gridWidth, gridHeight } from './useCreateGrid'
+import { onMounted } from "vue";
+import { useStorage } from "@vueuse/core";
+import GridContainer from "./GridContainer.vue";
+import GameHeader from "./GameHeader.vue";
+import SettingsForm from "./SettingsForm.vue";
 
-import GridContainer from './GridContainer.vue'
+import {
+  initializeGrid,
+  bombCount,
+  gridWidth,
+  gridHeight,
+} from "@/utils/useCreateGrid";
+
+const grid = useStorage("grid-settings", {
+  difficulty: "easy",
+  size: "medium",
+  width: 12,
+  height: 20,
+  mines: 20,
+});
 onMounted(() => {
-	gridWidth.value = 10
-	gridHeight.value = 14
-	setBombLocations()
-})
-
-const setstuff = () => {
-	gridWidth.value = 12
-	gridHeight.value = 18
-}
+  gridWidth.value = grid.value.width;
+  gridHeight.value = grid.value.height;
+  bombCount.value = grid.value.mines;
+  initializeGrid();
+});
 </script>
 
 <template>
-	<div class="grid place-items-center">
-		<h2 class="text-white p-4 text-xl" @click="setstuff">MineLeSweep</h2>
-		<GridContainer />
-	</div>
+  <div class="grid grid-cols-[auto,1fr]">
+    <GameHeader class="col-span-2" />
+    <GridContainer class="col-start-1" />
+    <SettingsForm class="col-start-2" />
+  </div>
 </template>
